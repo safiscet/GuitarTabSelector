@@ -1,5 +1,6 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -9,8 +10,8 @@ import java.util.List;
 public class GuitarTabConfiguration {
 
     private String rootPath;
-    private Collection<String> exludedPaths;
-    private List<String> formatRanking;
+    private Collection<String> excludedPaths = new ArrayList<>();
+    private List<String> formatRanking = new ArrayList<>();
 
     public String getRootPath() {
         return rootPath;
@@ -20,12 +21,12 @@ public class GuitarTabConfiguration {
         this.rootPath = rootPath;
     }
 
-    public Collection<String> getExludedPaths() {
-        return exludedPaths;
+    public Collection<String> getExcludedPaths() {
+        return excludedPaths;
     }
 
-    public void setExludedPaths(Collection<String> exludedPaths) {
-        this.exludedPaths = exludedPaths;
+    public void setExcludedPaths(Collection<String> excludedPaths) {
+        this.excludedPaths = excludedPaths;
     }
 
     public List<String> getFormatRanking() {
@@ -40,7 +41,7 @@ public class GuitarTabConfiguration {
     public String toString() {
         return "GuitarTabConfiguration{" +
                 "rootPath='" + rootPath + '\'' +
-                ", exludedPaths=" + exludedPaths +
+                ", excludedPaths=" + excludedPaths +
                 ", formatRanking=" + formatRanking +
                 '}';
     }

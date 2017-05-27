@@ -1,5 +1,10 @@
 package model;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
 /**
  * Created by Stefan Fritsch on 25.05.2017.
  */
@@ -7,7 +12,7 @@ public class GuitarTab {
 
     private String name;
     private String path;
-    private String format;
+    private Set<String> formats = new HashSet<>();
 
     public String getName() {
         return name;
@@ -25,12 +30,12 @@ public class GuitarTab {
         this.path = path;
     }
 
-    public String getFormat() {
-        return format;
+    public void addFormat(String format) {
+        formats.add(format);
     }
 
-    public void setFormat(String format) {
-        this.format = format;
+    public Set<String> getFormats() {
+        return formats;
     }
 
     @Override
@@ -38,7 +43,7 @@ public class GuitarTab {
         return "GuitarTab{" +
                 "name='" + name + '\'' +
                 ", path='" + path + '\'' +
-                ", format='" + format + '\'' +
+                ", formats=" + formats +
                 '}';
     }
 }

@@ -1,10 +1,10 @@
 package controller;
 
+import exceptions.NoSuchGuitarTabException;
 import interfaces.GuitarTabProvider;
 import model.FakeGuitarTabConfiguration;
 import model.GuitarTab;
 import model.GuitarTabConfiguration;
-import model.NoSuchGuitarTabException;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;

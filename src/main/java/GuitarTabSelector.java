@@ -1,15 +1,17 @@
 import controller.GuitarTabDirectoryService;
 import controller.RandomGuitarTabService;
+import exceptions.NoSuchGuitarTabException;
 import interfaces.GuitarTabProvider;
 import model.GuitarTab;
 import model.GuitarTabConfiguration;
-import model.NoSuchGuitarTabException;
 import org.apache.commons.cli.*;
 import org.apache.commons.lang3.StringUtils;
+import util.FormatUtils;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -31,6 +33,7 @@ public class GuitarTabSelector {
     private static final String[] defaultFormats = {"gp5", "gpx", "pdf", "ptb", "gp4", "txt", "odt", "docx", "tab"};
 
     private GuitarTab currentTab;
+    private GuitarTabConfiguration config;
     private RandomGuitarTabService randomGuitarTabService;
 
     public static void main(String[] args) {
@@ -39,7 +42,7 @@ public class GuitarTabSelector {
     }
 
     public GuitarTabSelector(String[] args) {
-        GuitarTabConfiguration config = createConfiguration(args);
+        config = createConfiguration(args);
         GuitarTabProvider guitarTabProvider = new GuitarTabDirectoryService(config);
         randomGuitarTabService = new RandomGuitarTabService(config, guitarTabProvider);
     }
@@ -67,6 +70,9 @@ public class GuitarTabSelector {
             handlePreviousTab();
         } else if (StringUtils.equalsAnyIgnoreCase(input, "open", "o")) {
             handleOpenTab();
+        } else if (StringUtils.equalsAnyIgnoreCase(input, "exit", "e")) {
+            System.out.println("Shutting down...");
+            System.exit(0);
         } else {
             System.out.println("Input " + input + " could not be interpreted.");
         }
@@ -77,7 +83,8 @@ public class GuitarTabSelector {
             currentTab = randomGuitarTabService.getNextTab();
             System.out.println("Selected Tab: " + currentTab.getName());
             System.out.println("Path: " + currentTab.getPath());
-            System.out.println("Available Formats: " + currentTab.getFormats());
+            System.out.println("Available Formats: "
+                    + FormatUtils.getOrderedFormats(currentTab, config.getFormatRanking()));
         } catch (NoSuchGuitarTabException e) {
             System.out.println("There is no next tab!");
         }
@@ -98,9 +105,11 @@ public class GuitarTabSelector {
             System.out.println("You have to select a guitar tab before opening it.");
             return;
         }
-        File file = new File(currentTab.getPath());
+        File parent = new File(currentTab.getPath());
+        String optimalFormat = FormatUtils.getOptimalFormat(currentTab, config.getFormatRanking());
+        Path tabPath = parent.toPath().resolve(currentTab.getName() + "." + optimalFormat);
         try {
-            desktop.open(file);
+            desktop.open(tabPath.toFile());
         } catch (IOException e) {
             e.printStackTrace();
         }

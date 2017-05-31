@@ -1,9 +1,9 @@
 package controller;
 
+import exceptions.NoSuchGuitarTabException;
 import interfaces.GuitarTabProvider;
 import model.GuitarTab;
 import model.GuitarTabConfiguration;
-import model.NoSuchGuitarTabException;
 
 import java.util.ArrayList;
 import java.util.Collections;

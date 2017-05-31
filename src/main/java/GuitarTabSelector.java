@@ -28,6 +28,8 @@ public class GuitarTabSelector {
     private static final String helpArg = "h";
     private static final String helpArgLong = "help";
 
+    private static final String[] defaultFormats = {"gp5", "gpx", "pdf", "ptb", "gp4", "txt", "odt", "docx", "tab"};
+
     private GuitarTab currentTab;
     private RandomGuitarTabService randomGuitarTabService;
 
@@ -122,6 +124,8 @@ public class GuitarTabSelector {
             if (cmd.hasOption(formatArg)) {
                 String[] formats = cmd.getOptionValues(formatArg);
                 config.setFormatRanking(new ArrayList<>(Arrays.asList(formats)));
+            } else {
+                config.setFormatRanking(new ArrayList<>(Arrays.asList(defaultFormats)));
             }
 
             return config;

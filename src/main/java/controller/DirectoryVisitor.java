@@ -6,7 +6,6 @@ import model.GuitarTabConfiguration;
 
 import java.io.IOException;
 import java.nio.file.*;
-import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -50,8 +49,8 @@ public class DirectoryVisitor implements FileVisitor<Path> {
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
         String name = com.google.common.io.Files.getNameWithoutExtension(file.toString());
-        String path = file.toString();
         String format = com.google.common.io.Files.getFileExtension(file.toString());
+        String path = file.getParent().toString();
         guitarTabCollector.notifyNewGuitarTab(name, path, format);
 
         return FileVisitResult.CONTINUE;

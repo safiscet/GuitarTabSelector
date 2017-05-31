@@ -17,15 +17,25 @@ public class GuitarTabDirectoryService implements GuitarTabCollector, GuitarTabP
 
     private GuitarTab currentTab;
     private List<GuitarTab> guitarTabs;
+    private List<String> formats;
+    private List<String> discardedFormats = new ArrayList<>();
 
     public GuitarTabDirectoryService(GuitarTabConfiguration config) {
         guitarTabs = new ArrayList<>();
+        formats = config.getFormatRanking();
         DirectoryVisitor directoryVisitor = new DirectoryVisitor(config, this);
         directoryVisitor.startVisiting();
     }
 
     @Override
     public void notifyNewGuitarTab(String name, String path, String format) {
+        if (!isSupportedFormat(format)) {
+            if (!discardedFormats.contains(format.toLowerCase())) {
+                discardedFormats.add(format);
+                System.out.println("Discarded format: " + format);
+            }
+            return;
+        }
         if(isCurrentTabAsOtherExtension(name, path, format)) {
             currentTab.addFormat(format);
         } else {
@@ -35,6 +45,11 @@ public class GuitarTabDirectoryService implements GuitarTabCollector, GuitarTabP
             currentTab.addFormat(format);
             guitarTabs.add(currentTab);
         }
+    }
+
+    private boolean isSupportedFormat(String format) {
+        return formats.stream()
+                .anyMatch(supported -> StringUtils.equalsIgnoreCase(format, supported));
     }
 
     @Override

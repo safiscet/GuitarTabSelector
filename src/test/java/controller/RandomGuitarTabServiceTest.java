@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.when;
 
 /**
@@ -77,6 +78,22 @@ public class RandomGuitarTabServiceTest {
         initTest(provider);
 
         assertThat(underTest.getAllTabs(), Matchers.containsInAnyOrder(tabs.toArray()));
+    }
+
+    @Test
+    public void someGuitarTabs_numberOfTabs() {
+        GuitarTabProvider provider = Mockito.mock(GuitarTabDirectoryService.class);
+        List<GuitarTab> tabs = Arrays.asList(
+                new GuitarTab("first", ""),
+                new GuitarTab("second", ""),
+                new GuitarTab("third", ""),
+                new GuitarTab("fourth", ""),
+                new GuitarTab("fifth", "")
+        );
+        when(provider.getAllGuitarTabs()).thenReturn(tabs);
+        initTest(provider);
+
+        assertThat(underTest.getNumberOfTabs(), is(tabs.size()));
     }
 
     private void initTest(GuitarTabProvider providerToUse) {

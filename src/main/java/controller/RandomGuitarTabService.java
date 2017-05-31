@@ -8,7 +8,6 @@ import model.NoSuchGuitarTabException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.ListIterator;
 
 /**
  * Created by Stefan Fritsch on 25.05.2017.
@@ -16,30 +15,26 @@ import java.util.ListIterator;
 public class RandomGuitarTabService {
 
     private final List<GuitarTab> guitarTabs;
-    private final ListIterator<GuitarTab> iterator;
-
-    public RandomGuitarTabService(GuitarTabConfiguration config) {
-        this(config, new GuitarTabDirectoryService(config));
-    }
+    private int currentPosition = -1;
 
     public RandomGuitarTabService(GuitarTabConfiguration config, GuitarTabProvider guitarTabProvider) {
         guitarTabs = new ArrayList<>(guitarTabProvider.getAllGuitarTabs());
         Collections.shuffle(guitarTabs);
-        System.out.println(guitarTabs);
-        iterator = guitarTabs.listIterator();
     }
 
     public GuitarTab getNextTab() throws NoSuchGuitarTabException {
-        if(iterator.hasNext()) {
-            return iterator.next();
+        if (currentPosition + 1 < guitarTabs.size()) {
+            currentPosition++;
+            return guitarTabs.get(currentPosition);
         } else {
             throw new NoSuchGuitarTabException("There is no next guitar tab.");
         }
     }
 
     public GuitarTab getPreviousTab() throws NoSuchGuitarTabException {
-        if(iterator.hasPrevious()) {
-            return iterator.previous();
+        if (currentPosition - 1 >= 0) {
+            currentPosition--;
+            return guitarTabs.get(currentPosition);
         } else {
             throw new NoSuchGuitarTabException("There is no previous guitar tab.");
         }
@@ -48,4 +43,9 @@ public class RandomGuitarTabService {
     public List<GuitarTab> getAllTabs() {
         return guitarTabs;
     }
+
+    public int getNumberOfTabs() {
+        return guitarTabs.size();
+    }
+
 }

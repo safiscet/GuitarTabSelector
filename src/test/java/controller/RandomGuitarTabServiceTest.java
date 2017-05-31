@@ -66,6 +66,33 @@ public class RandomGuitarTabServiceTest {
         assertThat(underTest.getNumberOfTabs(), is(tabs.size()));
     }
 
+    @Test
+    public void nextAndPreviousTab_Chaining() throws NoSuchGuitarTabException {
+        initTestWithRandomTabs(2);
+        List<GuitarTab> tabs = underTest.getAllTabs();
+
+        assertThat(underTest.getNextTab(), is(tabs.get(0)));
+        assertThat(underTest.getNextTab(), is(tabs.get(1)));
+        assertThat(underTest.getPreviousTab(), is(tabs.get(0)));
+        assertThat(underTest.getNextTab(), is(tabs.get(1)));
+    }
+
+    @Test
+    public void nextAndPreviousTab_MoreChaining() throws NoSuchGuitarTabException {
+        initTestWithRandomTabs(4);
+        List<GuitarTab> tabs = underTest.getAllTabs();
+
+        assertThat(underTest.getNextTab(), is(tabs.get(0)));
+        assertThat(underTest.getNextTab(), is(tabs.get(1)));
+        assertThat(underTest.getNextTab(), is(tabs.get(2)));
+        assertThat(underTest.getPreviousTab(), is(tabs.get(1)));
+        assertThat(underTest.getNextTab(), is(tabs.get(2)));
+        assertThat(underTest.getNextTab(), is(tabs.get(3)));
+        assertThat(underTest.getPreviousTab(), is(tabs.get(2)));
+        assertThat(underTest.getPreviousTab(), is(tabs.get(1)));
+        assertThat(underTest.getPreviousTab(), is(tabs.get(0)));
+    }
+
     /**
      * Initialize the RandomGuitarTabService with a mocked GuitarTabProvider that returns numberOfTabs generated GuitarTabs.
      * Returns the generated GuitarTabs for further testing.

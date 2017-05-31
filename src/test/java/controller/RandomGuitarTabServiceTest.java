@@ -31,7 +31,7 @@ public class RandomGuitarTabServiceTest {
     public void noGuitarTabs_NextTab() throws NoSuchGuitarTabException {
         GuitarTabProvider provider = Mockito.mock(GuitarTabDirectoryService.class);
         when(provider.getAllGuitarTabs()).thenReturn(Collections.emptyList());
-        init(provider);
+        initTest(provider);
 
         underTest.getNextTab();
     }
@@ -40,7 +40,7 @@ public class RandomGuitarTabServiceTest {
     public void noGuitarTabs_PreviousTab() throws NoSuchGuitarTabException {
         GuitarTabProvider provider = Mockito.mock(GuitarTabDirectoryService.class);
         when(provider.getAllGuitarTabs()).thenReturn(Collections.emptyList());
-        init(provider);
+        initTest(provider);
 
         underTest.getPreviousTab();
     }
@@ -54,7 +54,7 @@ public class RandomGuitarTabServiceTest {
                 new GuitarTab("third", "")
         );
         when(provider.getAllGuitarTabs()).thenReturn(tabs);
-        init(provider);
+        initTest(provider);
 
         List<GuitarTab> results = new ArrayList<>();
         for (int i = 0; i < tabs.size(); i++) {
@@ -64,7 +64,22 @@ public class RandomGuitarTabServiceTest {
         assertThat(results, Matchers.containsInAnyOrder(tabs.toArray()));
     }
 
-    private void init(GuitarTabProvider providerToUse) {
+    @Test
+    public void someGuitarTabs_GetAllTabs() {
+        GuitarTabProvider provider = Mockito.mock(GuitarTabDirectoryService.class);
+        List<GuitarTab> tabs = Arrays.asList(
+                new GuitarTab("first", ""),
+                new GuitarTab("second", ""),
+                new GuitarTab("third", ""),
+                new GuitarTab("fourth", "")
+        );
+        when(provider.getAllGuitarTabs()).thenReturn(tabs);
+        initTest(provider);
+
+        assertThat(underTest.getAllTabs(), Matchers.containsInAnyOrder(tabs.toArray()));
+    }
+
+    private void initTest(GuitarTabProvider providerToUse) {
         GuitarTabConfiguration config = new FakeGuitarTabConfiguration();
         underTest = new RandomGuitarTabService(config, providerToUse);
     }

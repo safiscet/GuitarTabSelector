@@ -5,6 +5,7 @@ import model.GuitarTab;
 import model.GuitarTabConfiguration;
 import model.NoSuchGuitarTabException;
 import org.apache.commons.cli.*;
+import org.apache.commons.lang3.StringUtils;
 
 import java.awt.*;
 import java.io.File;
@@ -18,8 +19,15 @@ import java.util.Scanner;
  */
 public class Main {
 
-    private static final String rootArg = "root";
-    private static final String excludedArg = "excluded";
+    private static final String rootArg = "r";
+    private static final String rootArgLong = "root";
+    private static final String excludedArg = "e";
+    private static final String excludedArgLong = "excluded";
+    private static final String formatArg = "f";
+    private static final String formatArgLong = "formats";
+    private static final String helpArg = "h";
+    private static final String helpArgLong = "help";
+
 
     private static GuitarTab currentTab;
     private static RandomGuitarTabService randomGuitarTabService;
@@ -32,9 +40,10 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Found " + randomGuitarTabService.getNumberOfTabs() + " different guitar tabs in total.\n");
         System.out.println("Control via command line input:");
-        System.out.println("'next' \t Get next Tab");
-        System.out.println("'prev' \t Get previous Tab");
-        System.out.println("'open' \t Open the current tab");
+        System.out.println("next, n \t - \t Get next Tab");
+        System.out.println("prev, p \t - \t Get previous Tab");
+        System.out.println("open, o \t - \t Open the current tab");
+        System.out.println("exit, e \t - \t Exit");
 
         while (true) {
             System.out.println("");
@@ -44,26 +53,23 @@ public class Main {
     }
 
     private static void handleInput(String input) {
-        switch (input) {
-            case "next":
-                handleNextTab();
-                break;
-            case "prev":
-                handlePreviousTab();
-                break;
-            case "open":
-                handleOpenTab();
-                break;
-            default:
-                System.out.println("Input " + input + " could not be interpreted.");
-                break;
+        if (StringUtils.equalsAnyIgnoreCase(input, "next", "n")) {
+            handleNextTab();
+        } else if (StringUtils.equalsAnyIgnoreCase(input, "prev", "p")) {
+            handlePreviousTab();
+        } else if (StringUtils.equalsAnyIgnoreCase(input, "open", "o")) {
+            handleOpenTab();
+        } else {
+            System.out.println("Input " + input + " could not be interpreted.");
         }
     }
 
     private static void handleNextTab() {
         try {
             currentTab = randomGuitarTabService.getNextTab();
-            System.out.println("Selected Tab: " + currentTab);
+            System.out.println("Selected Tab: " + currentTab.getName());
+            System.out.println("Path: " + currentTab.getPath());
+            System.out.println("Available Formats: " + currentTab.getFormats());
         } catch (NoSuchGuitarTabException e) {
             System.out.println("There is no next tab!");
         }
@@ -107,8 +113,14 @@ public class Main {
                 config.setExcludedPaths(new ArrayList<>(Arrays.asList(excludes)));
             }
 
-            if (cmd.hasOption("h"))
+            if (cmd.hasOption(formatArg)) {
+                String[] formats = cmd.getOptionValues(formatArg);
+                config.setFormatRanking(new ArrayList<>(Arrays.asList(formats)));
+            }
+
+            if (cmd.hasOption(helpArg)) {
                 help(options);
+            }
 
             return config;
         } catch (ParseException e) {
@@ -125,24 +137,32 @@ public class Main {
     private static Options getOptions() {
         Options options = new Options();
 
-        Option rootPath = Option.builder("r")
-                .longOpt("root")
+        Option rootPath = Option.builder(rootArg)
+                .longOpt(rootArgLong)
                 .argName("root dir")
                 .hasArg()
                 .desc("The root directory for the recursive guitar tab search")
                 .required()
                 .build();
 
-        Option excludedPaths = Option.builder("e")
-                .longOpt("excluded")
+        Option excludedPaths = Option.builder(excludedArg)
+                .longOpt(excludedArgLong)
                 .argName("excluded dirs")
                 .hasArgs()
                 .desc("Excluded directories for the recursive guitar tab search")
                 .build();
 
+        Option formats = Option.builder(formatArg)
+                .longOpt(formatArgLong)
+                .argName("preferred formats")
+                .hasArgs()
+                .desc("Ordered formats that should be supported")
+                .build();
+
         options.addOption(rootPath);
         options.addOption(excludedPaths);
-        options.addOption("h", "help", false, "show help.");
+        options.addOption(formats);
+        options.addOption(helpArg, helpArgLong, false, "show help.");
         return options;
     }
 }

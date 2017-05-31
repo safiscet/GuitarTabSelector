@@ -12,8 +12,6 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -30,32 +28,21 @@ public class RandomGuitarTabServiceTest {
 
     @Test(expected = NoSuchGuitarTabException.class)
     public void noGuitarTabs_NextTab() throws NoSuchGuitarTabException {
-        GuitarTabProvider provider = Mockito.mock(GuitarTabDirectoryService.class);
-        when(provider.getAllGuitarTabs()).thenReturn(Collections.emptyList());
-        initTest(provider);
+        initTestWithRandomTabs(0);
 
         underTest.getNextTab();
     }
 
     @Test(expected = NoSuchGuitarTabException.class)
     public void noGuitarTabs_PreviousTab() throws NoSuchGuitarTabException {
-        GuitarTabProvider provider = Mockito.mock(GuitarTabDirectoryService.class);
-        when(provider.getAllGuitarTabs()).thenReturn(Collections.emptyList());
-        initTest(provider);
+        initTestWithRandomTabs(0);
 
         underTest.getPreviousTab();
     }
 
     @Test
     public void someGuitarTabs_ResultInAnyOrder() throws NoSuchGuitarTabException {
-        GuitarTabProvider provider = Mockito.mock(GuitarTabDirectoryService.class);
-        List<GuitarTab> tabs = Arrays.asList(
-                new GuitarTab("first", ""),
-                new GuitarTab("second", ""),
-                new GuitarTab("third", "")
-        );
-        when(provider.getAllGuitarTabs()).thenReturn(tabs);
-        initTest(provider);
+        List<GuitarTab> tabs = initTestWithRandomTabs(100);
 
         List<GuitarTab> results = new ArrayList<>();
         for (int i = 0; i < tabs.size(); i++) {
@@ -67,38 +54,38 @@ public class RandomGuitarTabServiceTest {
 
     @Test
     public void someGuitarTabs_GetAllTabs() {
-        GuitarTabProvider provider = Mockito.mock(GuitarTabDirectoryService.class);
-        List<GuitarTab> tabs = Arrays.asList(
-                new GuitarTab("first", ""),
-                new GuitarTab("second", ""),
-                new GuitarTab("third", ""),
-                new GuitarTab("fourth", "")
-        );
-        when(provider.getAllGuitarTabs()).thenReturn(tabs);
-        initTest(provider);
+        List<GuitarTab> tabs = initTestWithRandomTabs(20);
 
         assertThat(underTest.getAllTabs(), Matchers.containsInAnyOrder(tabs.toArray()));
     }
 
     @Test
     public void someGuitarTabs_numberOfTabs() {
-        GuitarTabProvider provider = Mockito.mock(GuitarTabDirectoryService.class);
-        List<GuitarTab> tabs = Arrays.asList(
-                new GuitarTab("first", ""),
-                new GuitarTab("second", ""),
-                new GuitarTab("third", ""),
-                new GuitarTab("fourth", ""),
-                new GuitarTab("fifth", "")
-        );
-        when(provider.getAllGuitarTabs()).thenReturn(tabs);
-        initTest(provider);
+        List<GuitarTab> tabs = initTestWithRandomTabs(50);
 
         assertThat(underTest.getNumberOfTabs(), is(tabs.size()));
     }
 
-    private void initTest(GuitarTabProvider providerToUse) {
+    /**
+     * Initialize the RandomGuitarTabService with a mocked GuitarTabProvider that returns numberOfTabs generated GuitarTabs.
+     * Returns the generated GuitarTabs for further testing.
+     */
+    private List<GuitarTab> initTestWithRandomTabs(int numberOfTabs) {
+        GuitarTabProvider provider = Mockito.mock(GuitarTabDirectoryService.class);
+        List<GuitarTab> tabs = tabsForTesting(numberOfTabs);
+        when(provider.getAllGuitarTabs()).thenReturn(tabs);
+
         GuitarTabConfiguration config = new FakeGuitarTabConfiguration();
-        underTest = new RandomGuitarTabService(config, providerToUse);
+        underTest = new RandomGuitarTabService(config, provider);
+
+        return tabs;
     }
 
+    private List<GuitarTab> tabsForTesting(int numberOfTabs) {
+        List<GuitarTab> tabs = new ArrayList<>();
+        for (int i = 0; i < numberOfTabs; i++) {
+            tabs.add(new GuitarTab("Tab" + i, ""));
+        }
+        return tabs;
+    }
 }

@@ -6,6 +6,7 @@ import model.GuitarTabConfiguration;
 import model.NoSuchGuitarTabException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -23,6 +24,7 @@ public class RandomGuitarTabService {
 
     public RandomGuitarTabService(GuitarTabConfiguration config, GuitarTabProvider guitarTabProvider) {
         guitarTabs = new ArrayList<>(guitarTabProvider.getAllGuitarTabs());
+        Collections.shuffle(guitarTabs);
         System.out.println(guitarTabs);
         iterator = guitarTabs.listIterator();
     }

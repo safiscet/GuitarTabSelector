@@ -1,9 +1,8 @@
 package model;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 /**
  * Created by Stefan Fritsch on 25.05.2017.
@@ -13,6 +12,17 @@ public class GuitarTab {
     private String name;
     private String path;
     private Set<String> formats = new HashSet<>();
+
+    public GuitarTab() {
+    }
+
+
+    public GuitarTab(String name, String path, String... formats) {
+        this.name = name;
+        this.path = path;
+        this.formats = new HashSet<>(Arrays.asList(formats));
+    }
+
 
     public String getName() {
         return name;

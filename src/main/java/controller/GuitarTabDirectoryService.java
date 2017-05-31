@@ -1,6 +1,7 @@
 package controller;
 
 import interfaces.GuitarTabCollector;
+import interfaces.GuitarTabProvider;
 import model.GuitarTab;
 import model.GuitarTabConfiguration;
 import org.apache.commons.lang3.StringUtils;
@@ -12,7 +13,7 @@ import java.util.List;
 /**
  * Created by Stefan Fritsch on 27.05.2017.
  */
-public class GuitarTabDirectoryService implements GuitarTabCollector {
+public class GuitarTabDirectoryService implements GuitarTabCollector, GuitarTabProvider {
 
     private GuitarTab currentTab;
     private List<GuitarTab> guitarTabs;
@@ -23,6 +24,7 @@ public class GuitarTabDirectoryService implements GuitarTabCollector {
         directoryVisitor.startVisiting();
     }
 
+    @Override
     public void notifyNewGuitarTab(String name, String path, String format) {
         if(isCurrentTabAsOtherExtension(name, path, format)) {
             currentTab.addFormat(format);
@@ -40,6 +42,7 @@ public class GuitarTabDirectoryService implements GuitarTabCollector {
         currentTab = null;
     }
 
+    @Override
     public Collection<GuitarTab> getAllGuitarTabs() {
         return guitarTabs;
     }

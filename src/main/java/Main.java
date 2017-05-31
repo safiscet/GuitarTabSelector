@@ -6,6 +6,9 @@ import model.GuitarTabConfiguration;
 import model.NoSuchGuitarTabException;
 import org.apache.commons.cli.*;
 
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -29,8 +32,9 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Found " + randomGuitarTabService.getNumberOfTabs() + " different guitar tabs in total.\n");
         System.out.println("Control via command line input:");
-        System.out.println("'next' \t Next Tab");
-        System.out.println("'prev' \t Previous Tab");
+        System.out.println("'next' \t Get next Tab");
+        System.out.println("'prev' \t Get previous Tab");
+        System.out.println("'open' \t Open the current tab");
 
         while (true) {
             System.out.println("");
@@ -46,6 +50,9 @@ public class Main {
                 break;
             case "prev":
                 handlePreviousTab();
+                break;
+            case "open":
+                handleOpenTab();
                 break;
             default:
                 System.out.println("Input " + input + " could not be interpreted.");
@@ -68,6 +75,20 @@ public class Main {
             System.out.println("Selected Tab: " + currentTab);
         } catch (NoSuchGuitarTabException e) {
             System.out.println("There is no previous tab!");
+        }
+    }
+
+    private static void handleOpenTab() {
+        Desktop desktop = Desktop.getDesktop();
+        if (currentTab == null) {
+            System.out.println("You have to select a guitar tab before opening it.");
+            return;
+        }
+        File file = new File(currentTab.getPath());
+        try {
+            desktop.open(file);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

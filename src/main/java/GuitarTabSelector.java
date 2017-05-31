@@ -15,9 +15,9 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 /**
- * Created by Stefan Fritsch on 27.05.2017.
+ * Created by Stefan Fritsch on 31.05.2017.
  */
-public class Main {
+public class GuitarTabSelector {
 
     private static final String rootArg = "r";
     private static final String rootArgLong = "root";
@@ -28,15 +28,21 @@ public class Main {
     private static final String helpArg = "h";
     private static final String helpArgLong = "help";
 
-
-    private static GuitarTab currentTab;
-    private static RandomGuitarTabService randomGuitarTabService;
+    private GuitarTab currentTab;
+    private RandomGuitarTabService randomGuitarTabService;
 
     public static void main(String[] args) {
+        GuitarTabSelector selector = new GuitarTabSelector(args);
+        selector.start();
+    }
+
+    public GuitarTabSelector(String[] args) {
         GuitarTabConfiguration config = createConfiguration(args);
         GuitarTabProvider guitarTabProvider = new GuitarTabDirectoryService(config);
         randomGuitarTabService = new RandomGuitarTabService(config, guitarTabProvider);
+    }
 
+    public void start() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Found " + randomGuitarTabService.getNumberOfTabs() + " different guitar tabs in total.\n");
         System.out.println("Control via command line input:");
@@ -52,7 +58,7 @@ public class Main {
         }
     }
 
-    private static void handleInput(String input) {
+    private void handleInput(String input) {
         if (StringUtils.equalsAnyIgnoreCase(input, "next", "n")) {
             handleNextTab();
         } else if (StringUtils.equalsAnyIgnoreCase(input, "prev", "p")) {
@@ -64,7 +70,7 @@ public class Main {
         }
     }
 
-    private static void handleNextTab() {
+    private void handleNextTab() {
         try {
             currentTab = randomGuitarTabService.getNextTab();
             System.out.println("Selected Tab: " + currentTab.getName());
@@ -75,7 +81,7 @@ public class Main {
         }
     }
 
-    private static void handlePreviousTab() {
+    private void handlePreviousTab() {
         try {
             currentTab = randomGuitarTabService.getPreviousTab();
             System.out.println("Selected Tab: " + currentTab);
@@ -84,7 +90,7 @@ public class Main {
         }
     }
 
-    private static void handleOpenTab() {
+    private void handleOpenTab() {
         Desktop desktop = Desktop.getDesktop();
         if (currentTab == null) {
             System.out.println("You have to select a guitar tab before opening it.");
@@ -98,7 +104,7 @@ public class Main {
         }
     }
 
-    private static GuitarTabConfiguration createConfiguration(String[] args) {
+    private GuitarTabConfiguration createConfiguration(String[] args) {
         Options options = getOptions();
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = null;
@@ -118,10 +124,6 @@ public class Main {
                 config.setFormatRanking(new ArrayList<>(Arrays.asList(formats)));
             }
 
-            if (cmd.hasOption(helpArg)) {
-                help(options);
-            }
-
             return config;
         } catch (ParseException e) {
             help(options);
@@ -129,12 +131,12 @@ public class Main {
         }
     }
 
-    private static void help(Options options) {
+    private void help(Options options) {
         HelpFormatter helpFormatter = new HelpFormatter();
         helpFormatter.printHelp("Main", options);
     }
 
-    private static Options getOptions() {
+    private Options getOptions() {
         Options options = new Options();
 
         Option rootPath = Option.builder(rootArg)

@@ -3,6 +3,7 @@ package util;
 import model.GuitarTab;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -10,6 +11,11 @@ import java.util.Set;
  * Created by Stefan Fritsch on 31.05.2017.
  */
 public class FormatUtils {
+
+
+    public static List<String> getDefaultFormats() {
+        return new ArrayList<>(Arrays.asList("gp5", "gpx", "pdf", "ptb", "gp4", "txt", "odt", "docx", "tab"));
+    }
 
     /**
      * Returns the available formats for a given tab ordered by the given format preferences

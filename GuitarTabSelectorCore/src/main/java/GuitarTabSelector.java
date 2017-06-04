@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -30,7 +31,7 @@ public class GuitarTabSelector {
     private static final String helpArg = "h";
     private static final String helpArgLong = "help";
 
-    private static final String[] defaultFormats = {"gp5", "gpx", "pdf", "ptb", "gp4", "txt", "odt", "docx", "tab"};
+    private static final List<String> defaultFormats = FormatUtils.getDefaultFormats();
 
     private GuitarTab currentTab;
     private GuitarTabConfiguration config;
@@ -134,7 +135,7 @@ public class GuitarTabSelector {
                 String[] formats = cmd.getOptionValues(formatArg);
                 config.setFormatRanking(new ArrayList<>(Arrays.asList(formats)));
             } else {
-                config.setFormatRanking(new ArrayList<>(Arrays.asList(defaultFormats)));
+                config.setFormatRanking(defaultFormats);
             }
 
             return config;

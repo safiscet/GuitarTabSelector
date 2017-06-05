@@ -1,11 +1,13 @@
-import controller.GuitarTabDirectoryService;
-import controller.RandomGuitarTabService;
+import exceptions.InvalidConfigurationException;
 import exceptions.NoSuchGuitarTabException;
 import interfaces.GuitarTabProvider;
 import model.GuitarTab;
 import model.GuitarTabConfiguration;
 import org.apache.commons.cli.*;
 import org.apache.commons.lang3.StringUtils;
+import service.GuitarTabConfigurationService;
+import service.GuitarTabDirectoryService;
+import service.RandomGuitarTabService;
 import util.FormatUtils;
 
 import java.awt.*;
@@ -30,11 +32,14 @@ public class GuitarTabSelector {
     private static final String formatArgLong = "formats";
     private static final String helpArg = "h";
     private static final String helpArgLong = "help";
+    private static final String configArg = "c";
+    private static final String configArgLong = "config";
 
     private static final List<String> defaultFormats = FormatUtils.getDefaultFormats();
 
     private GuitarTab currentTab;
     private GuitarTabConfiguration config;
+    GuitarTabConfigurationService configService;
     private RandomGuitarTabService randomGuitarTabService;
 
     public static void main(String[] args) {
@@ -43,7 +48,8 @@ public class GuitarTabSelector {
     }
 
     public GuitarTabSelector(String[] args) {
-        config = createConfiguration(args);
+        configService = new GuitarTabConfigurationService();
+        createConfiguration(args);
         GuitarTabProvider guitarTabProvider = new GuitarTabDirectoryService(config);
         randomGuitarTabService = new RandomGuitarTabService(config, guitarTabProvider);
     }
@@ -116,15 +122,23 @@ public class GuitarTabSelector {
         }
     }
 
-    private GuitarTabConfiguration createConfiguration(String[] args) {
+    private void createConfiguration(String[] args) {
         Options options = getOptions();
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = null;
         try {
             cmd = parser.parse(options, args);
-            GuitarTabConfiguration config = new GuitarTabConfiguration();
 
-            config.setRootPath(cmd.getOptionValue(rootArg));
+            if (cmd.hasOption(configArg)) {
+                String configPath = cmd.getOptionValue(configArg);
+                config = configService.getFromJsonFile(configPath);
+            } else {
+                config = new GuitarTabConfiguration();
+            }
+
+            if (cmd.hasOption(rootArg)) {
+                config.setRootPath(cmd.getOptionValue(rootArg));
+            }
 
             if (cmd.hasOption(excludedArg)) {
                 String[] excludes = cmd.getOptionValues(excludedArg);
@@ -138,9 +152,15 @@ public class GuitarTabSelector {
                 config.setFormatRanking(defaultFormats);
             }
 
-            return config;
+            if (StringUtils.isEmpty(config.getRootPath())) {
+                throw new InvalidConfigurationException("There must be a root path!");
+            }
+
         } catch (ParseException e) {
             help(options);
+            throw new IllegalArgumentException(e);
+        } catch (InvalidConfigurationException e) {
+            System.out.println("The configuration was invalid. " + e.getMessage());
             throw new IllegalArgumentException(e);
         }
     }
@@ -158,7 +178,6 @@ public class GuitarTabSelector {
                 .argName("root dir")
                 .hasArg()
                 .desc("The root directory for the recursive guitar tab search")
-                .required()
                 .build();
 
         Option excludedPaths = Option.builder(excludedArg)
@@ -175,9 +194,17 @@ public class GuitarTabSelector {
                 .desc("Ordered formats that should be supported")
                 .build();
 
+        Option config = Option.builder(configArg)
+                .longOpt(configArgLong)
+                .argName("config file")
+                .hasArg()
+                .desc("JSON config file")
+                .build();
+
         options.addOption(rootPath);
         options.addOption(excludedPaths);
         options.addOption(formats);
+        options.addOption(config);
         options.addOption(helpArg, helpArgLong, false, "show help.");
         return options;
     }

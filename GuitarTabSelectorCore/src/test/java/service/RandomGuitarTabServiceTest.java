@@ -1,4 +1,4 @@
-package controller;
+package service;
 
 import exceptions.NoSuchGuitarTabException;
 import interfaces.GuitarTabProvider;

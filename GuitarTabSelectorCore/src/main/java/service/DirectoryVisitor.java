@@ -1,4 +1,4 @@
-package controller;
+package service;
 
 import interfaces.GuitarTabCollector;
 import model.GuitarTab;

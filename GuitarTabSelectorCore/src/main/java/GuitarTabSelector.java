@@ -9,11 +9,8 @@ import service.GuitarTabConfigurationService;
 import service.GuitarTabDirectoryService;
 import service.RandomGuitarTabService;
 import util.FormatUtils;
+import util.GuitarTabUtils;
 
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,7 +36,7 @@ public class GuitarTabSelector {
 
     private GuitarTab currentTab;
     private GuitarTabConfiguration config;
-    GuitarTabConfigurationService configService;
+    private GuitarTabConfigurationService configService;
     private RandomGuitarTabService randomGuitarTabService;
 
     public static void main(String[] args) {
@@ -47,14 +44,14 @@ public class GuitarTabSelector {
         selector.start();
     }
 
-    public GuitarTabSelector(String[] args) {
+    private GuitarTabSelector(String[] args) {
         configService = new GuitarTabConfigurationService();
         createConfiguration(args);
         GuitarTabProvider guitarTabProvider = new GuitarTabDirectoryService(config);
         randomGuitarTabService = new RandomGuitarTabService(config, guitarTabProvider);
     }
 
-    public void start() {
+    private void start() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Found " + randomGuitarTabService.getNumberOfTabs() + " different guitar tabs in total.\n");
         System.out.println("Control via command line input:");
@@ -107,19 +104,7 @@ public class GuitarTabSelector {
     }
 
     private void handleOpenTab() {
-        Desktop desktop = Desktop.getDesktop();
-        if (currentTab == null) {
-            System.out.println("You have to select a guitar tab before opening it.");
-            return;
-        }
-        File parent = new File(currentTab.getPath());
-        String optimalFormat = FormatUtils.getOptimalFormat(currentTab, config.getFormatRanking());
-        Path tabPath = parent.toPath().resolve(currentTab.getName() + "." + optimalFormat);
-        try {
-            desktop.open(tabPath.toFile());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        GuitarTabUtils.openDefaultGuitarTab(currentTab, config);
     }
 
     private void createConfiguration(String[] args) {

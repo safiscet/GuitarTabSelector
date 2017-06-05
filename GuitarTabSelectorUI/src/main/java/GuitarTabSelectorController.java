@@ -12,12 +12,9 @@ import service.GuitarTabConfigurationService;
 import service.GuitarTabDirectoryService;
 import service.RandomGuitarTabService;
 import util.FormatUtils;
+import util.GuitarTabUtils;
 
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Path;
 import java.util.ResourceBundle;
 
 /**
@@ -59,19 +56,7 @@ public class GuitarTabSelectorController implements Initializable {
     }
 
     public void openTab() {
-        Desktop desktop = Desktop.getDesktop();
-        if (currentTab == null) {
-            System.out.println("You have to select a guitar tab before opening it.");
-            return;
-        }
-        File parent = new File(currentTab.getPath());
-        String optimalFormat = FormatUtils.getOptimalFormat(currentTab, config.getFormatRanking());
-        Path tabPath = parent.toPath().resolve(currentTab.getName() + "." + optimalFormat);
-        try {
-            desktop.open(tabPath.toFile());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        GuitarTabUtils.openDefaultGuitarTab(currentTab, config);
     }
 
     public void nextTab() {

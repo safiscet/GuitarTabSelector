@@ -13,12 +13,12 @@ import java.nio.file.Path;
  */
 public class GuitarTabUtils {
 
-    public static void openDefaultGuitarTab(GuitarTab guitarTab, GuitarTabConfiguration config) {
+    public static void openDefaultGuitarTab(GuitarTab guitarTab, GuitarTabConfiguration config) throws IOException {
         String optimalFormat = FormatUtils.getOptimalFormat(guitarTab, config.getFormatRanking());
         openGuitarTab(guitarTab, optimalFormat);
     }
 
-    public static void openGuitarTab(GuitarTab guitarTab, String format) {
+    public static void openGuitarTab(GuitarTab guitarTab, String format) throws IOException {
         Desktop desktop = Desktop.getDesktop();
         if (guitarTab == null) {
             System.out.println("You have to select a guitar tab before opening it.");
@@ -26,10 +26,6 @@ public class GuitarTabUtils {
         }
         File parent = new File(guitarTab.getPath());
         Path tabPath = parent.toPath().resolve(guitarTab.getName() + "." + format);
-        try {
-            desktop.open(tabPath.toFile());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        desktop.open(tabPath.toFile());
     }
 }

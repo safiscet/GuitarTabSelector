@@ -14,6 +14,7 @@ import service.RandomGuitarTabService;
 import util.FormatUtils;
 import util.GuitarTabUtils;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -56,7 +57,11 @@ public class GuitarTabSelectorController implements Initializable {
     }
 
     public void openTab() {
-        GuitarTabUtils.openDefaultGuitarTab(currentTab, config);
+        try {
+            GuitarTabUtils.openDefaultGuitarTab(currentTab, config);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void nextTab() {

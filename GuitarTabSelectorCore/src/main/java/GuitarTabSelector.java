@@ -11,6 +11,7 @@ import service.RandomGuitarTabService;
 import util.FormatUtils;
 import util.GuitarTabUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -104,7 +105,11 @@ public class GuitarTabSelector {
     }
 
     private void handleOpenTab() {
-        GuitarTabUtils.openDefaultGuitarTab(currentTab, config);
+        try {
+            GuitarTabUtils.openDefaultGuitarTab(currentTab, config);
+        } catch (IOException e) {
+            System.out.println("The guitar tab could not be opened: " + e.getMessage());
+        }
     }
 
     private void createConfiguration(String[] args) {

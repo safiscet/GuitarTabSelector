@@ -1,3 +1,4 @@
+import exceptions.InvalidConfigurationException;
 import exceptions.NoSuchGuitarTabException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -7,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import model.GuitarTab;
 import model.GuitarTabConfiguration;
+import service.GuitarTabConfigurationService;
 import service.GuitarTabDirectoryService;
 import service.RandomGuitarTabService;
 import util.FormatUtils;
@@ -26,6 +28,7 @@ public class GuitarTabSelectorController implements Initializable {
     private RandomGuitarTabService randomGuitarTabService;
     private GuitarTab currentTab;
     private ObservableList<String> formats = FXCollections.observableArrayList();
+    private GuitarTabConfigurationService configurationService = new GuitarTabConfigurationService();
     private GuitarTabConfiguration config;
 
     @FXML
@@ -37,9 +40,11 @@ public class GuitarTabSelectorController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        config = new GuitarTabConfiguration();
-        config.setRootPath("C:\\Users\\frits\\Documents\\Tabs\\Fingerstyle\\Soundtracks\\Anime");
-        config.setFormatRanking(FormatUtils.getDefaultFormats());
+        try {
+            config = configurationService.getFromJsonFile("config.json");
+        } catch (InvalidConfigurationException e) {
+            e.printStackTrace();
+        }
         randomGuitarTabService = new RandomGuitarTabService(config, new GuitarTabDirectoryService(config));
         formatsListView.setItems(formats);
     }

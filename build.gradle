@@ -1,16 +1,16 @@
-group 'de.safiscet.guitartabselector'
-version '1.0'
+allprojects {
 
-subprojects {
-
-    apply plugin: 'java'
-
-    sourceCompatibility = 1.8
-
+    group 'de.safiscet.guitartabselector'
+    version '1.0'
 
     repositories {
         mavenCentral()
     }
+}
+
+subprojects {
+
+    apply plugin: 'java'
 
     dependencies {
 

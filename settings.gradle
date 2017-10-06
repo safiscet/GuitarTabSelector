@@ -1,5 +1,5 @@
 rootProject.name = 'GuitarTabSelector'
-include 'guitartabselector-core'
-include 'guitartabselector-ui'
+include 'GuitarTabSelectorCore'
+include 'GuitarTabSelectorUI'
 
 

@@ -151,6 +151,7 @@ public class GuitarTabSelector {
             throw new IllegalArgumentException(e);
         } catch (InvalidConfigurationException e) {
             System.out.println("The configuration was invalid. " + e.getMessage());
+            help(options);
             throw new IllegalArgumentException(e);
         }
     }

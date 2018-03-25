@@ -39,7 +39,7 @@ public class GuitarTabSelectorController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
-            config = configurationService.getFromJsonFile("config.json");
+            config = configurationService.getFromJsonFile(getClass().getResource("dummy-data/config.json").getPath());
         } catch (InvalidConfigurationException e) {
             e.printStackTrace();
         }

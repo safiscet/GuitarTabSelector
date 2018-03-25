@@ -107,7 +107,7 @@ public class GuitarTabSelector {
     private void handleOpenTab() {
         try {
             GuitarTabUtils.openDefaultGuitarTab(currentTab, config);
-        } catch (IOException e) {
+        } catch (NoSuchGuitarTabException e) {
             System.out.println("The guitar tab could not be opened: " + e.getMessage());
         }
     }

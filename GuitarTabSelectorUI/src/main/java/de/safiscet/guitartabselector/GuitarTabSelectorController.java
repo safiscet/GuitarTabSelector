@@ -43,7 +43,7 @@ public class GuitarTabSelectorController implements Initializable {
         try {
             config = configurationService.getFromJsonFile(getClass().getResource("/dummy-data/config.json").getPath());
         } catch (InvalidConfigurationException e) {
-            e.printStackTrace();
+            handleException(e);
         }
         randomGuitarTabService = new RandomGuitarTabService(config, new GuitarTabDirectoryService(config));
         formatsListView.setItems(formats);
@@ -54,15 +54,15 @@ public class GuitarTabSelectorController implements Initializable {
             currentTab = randomGuitarTabService.getPreviousTab();
             updateUI();
         } catch (NoSuchGuitarTabException e) {
-            e.printStackTrace();
+            handleException(e);
         }
     }
 
     public void openTab() {
         try {
             GuitarTabUtils.openDefaultGuitarTab(currentTab, config);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (NoSuchGuitarTabException e) {
+            handleException(e);
         }
     }
 
@@ -71,7 +71,7 @@ public class GuitarTabSelectorController implements Initializable {
             currentTab = randomGuitarTabService.getNextTab();
             updateUI();
         } catch (NoSuchGuitarTabException e) {
-            e.printStackTrace();
+            handleException(e);
         }
     }
 
@@ -79,5 +79,11 @@ public class GuitarTabSelectorController implements Initializable {
         currentTabTitle.setText(currentTab.getName());
         currentTabPath.setText(currentTab.getPath());
         formats.setAll(FormatUtils.getOrderedFormats(currentTab, config.getFormatRanking()));
+    }
+
+    private void handleException(Exception e) {
+        //TODO: show the exception message or something later
+        //TODO: Create exception mapper to differ between user and technical exceptions
+        e.printStackTrace();
     }
 }

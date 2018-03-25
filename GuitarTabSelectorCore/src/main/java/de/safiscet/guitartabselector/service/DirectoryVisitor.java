@@ -18,7 +18,6 @@ public class DirectoryVisitor implements FileVisitor<Path> {
     private GuitarTabCollector guitarTabCollector;
     private Path root;
     private Collection<Path> excludedPaths;
-    private GuitarTab currentTab;
 
     DirectoryVisitor(GuitarTabConfiguration config, GuitarTabCollector guitarTabCollector) {
         this.guitarTabCollector = guitarTabCollector;
@@ -32,6 +31,7 @@ public class DirectoryVisitor implements FileVisitor<Path> {
         try {
             Files.walkFileTree(root, this);
         } catch (IOException e) {
+            //TODO: this has to be handled later
             e.printStackTrace();
         }
     }

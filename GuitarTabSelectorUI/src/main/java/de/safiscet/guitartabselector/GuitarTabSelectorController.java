@@ -6,6 +6,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import de.safiscet.guitartabselector.model.GuitarTab;
@@ -82,8 +84,10 @@ public class GuitarTabSelectorController implements Initializable {
     }
 
     private void handleException(Exception e) {
-        //TODO: show the exception message or something later
         //TODO: Create exception mapper to differ between user and technical exceptions
+        Alert alert = new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK);
+        alert.show();
+        // TODO: remove this later or use actual logging
         e.printStackTrace();
     }
 }

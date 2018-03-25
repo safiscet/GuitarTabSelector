@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane prefHeight="200.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8.0.112"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.safiscet.guitartabselector.GuitarTabSelectorController">
+
+    <top>
+        <GridPane BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+            </padding>
+            <columnConstraints>
+                <ColumnConstraints hgrow="ALWAYS" halignment="CENTER" minWidth="40.0" percentWidth="33"/>
+                <ColumnConstraints hgrow="ALWAYS" halignment="CENTER" minWidth="40.0" percentWidth="33"/>
+                <ColumnConstraints hgrow="ALWAYS" halignment="CENTER" minWidth="40.0" percentWidth="33"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0"/>
+            </rowConstraints>
+
+            <Button text="Previous Tab" GridPane.columnIndex="0" onAction="#previousTab"/>
+            <Button text="Open Default" GridPane.columnIndex="1" onAction="#openTab"/>
+            <Button text="Next Tab" GridPane.columnIndex="2" onAction="#nextTab"/>
+        </GridPane>
+    </top>
+
+    <center>
+        <VBox prefHeight="200.0" prefWidth="100.0" alignment="CENTER">
+
+            <Label fx:id="currentTabTitle" text="Title"/>
+            <Label fx:id="currentTabPath" text="Path"/>
+
+        </VBox>
+    </center>
+
+    <bottom>
+        <ListView fx:id="formatsListView" minHeight="100" minWidth="100" prefHeight="100" prefWidth="100"/>
+    </bottom>
+
+</BorderPane>

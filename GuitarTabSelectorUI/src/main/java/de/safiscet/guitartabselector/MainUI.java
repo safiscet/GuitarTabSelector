@@ -9,15 +9,16 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class MainUI extends Application {
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         launch(args);
     }
 
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/guitarTabSelector.fxml"));
 
-        Scene scene = new Scene(root, 300, 275);
+    @Override
+    public void start(final Stage primaryStage) throws Exception {
+        final Parent root = FXMLLoader.load(getClass().getResource("/fxml/guitarTabSelector.fxml"));
+
+        final Scene scene = new Scene(root, 300, 275);
 
         primaryStage.setTitle("Guitar Tab Selector");
         primaryStage.setScene(scene);

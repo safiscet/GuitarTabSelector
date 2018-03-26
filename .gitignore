@@ -61,6 +61,9 @@ modules.xml
 .idea/misc.xml
 *.ipr
 
+### Save Actions plugin ###
+saveactions_settings.xml
+
 ### Java ###
 # Compiled class file
 *.class

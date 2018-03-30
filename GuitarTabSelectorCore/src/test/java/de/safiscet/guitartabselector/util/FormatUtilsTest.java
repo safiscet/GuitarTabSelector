@@ -1,53 +1,54 @@
 package de.safiscet.guitartabselector.util;
 
-import de.safiscet.guitartabselector.FormatUtils;
-import de.safiscet.guitartabselector.model.GuitarTab;
-import org.junit.Test;
-
 import java.util.Arrays;
 import java.util.List;
-
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import de.safiscet.guitartabselector.FormatUtils;
+import de.safiscet.guitartabselector.model.GuitarTab;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by Stefan Fritsch on 31.05.2017.
  */
-public class FormatUtilsTest {
+class FormatUtilsTest {
 
     @Test
-    public void getOrderedFormats_EmptyTabFormats() {
-        GuitarTab tab = new GuitarTab("test", "");
-        List<String> orderedFormats = FormatUtils.getOrderedFormats(tab, Arrays.asList("gp5", "pdf"));
-        assertThat(orderedFormats.size(), is(0));
+    void getOrderedFormats_EmptyTabFormats() {
+        final GuitarTab tab = new GuitarTab("test", "");
+        final List<String> orderedFormats = FormatUtils.getOrderedFormats(tab, Arrays.asList("gp5", "pdf"));
+        assertThat(orderedFormats).isEmpty();
     }
+
 
     @Test
-    public void getOrderedFormats_ExampleFormats() {
-        GuitarTab tab = new GuitarTab("test", "", "f3", "f1", "f2");
-        List<String> formatRanking = Arrays.asList("f1", "f2");
+    void getOrderedFormats_ExampleFormats() {
+        final GuitarTab tab = new GuitarTab("test", "", "f3", "f1", "f2");
+        final List<String> formatRanking = Arrays.asList("f1", "f2");
 
-        List<String> orderedFormats = FormatUtils.getOrderedFormats(tab, formatRanking);
+        final List<String> orderedFormats = FormatUtils.getOrderedFormats(tab, formatRanking);
 
-        assertThat(orderedFormats.size(), is(2));
-        assertThat(orderedFormats.get(0), is(formatRanking.get(0)));
-        assertThat(orderedFormats.get(1), is(formatRanking.get(1)));
+
+        assertThat(orderedFormats).hasSize(2);
+        assertThat(orderedFormats).containsExactlyElementsOf(formatRanking);
     }
+
 
     @Test
-    public void getOptimalFormat() {
-        GuitarTab tab = new GuitarTab("test", "", "f2", "f3", "f4");
-        List<String> formatRanking = Arrays.asList("f1", "f2", "f3");
+    void getOptimalFormat() {
+        final GuitarTab tab = new GuitarTab("test", "", "f2", "f3", "f4");
+        final List<String> formatRanking = Arrays.asList("f1", "f2", "f3");
 
-        assertThat(FormatUtils.getOptimalFormat(tab, formatRanking), is("f2"));
+        assertThat(FormatUtils.getOptimalFormat(tab, formatRanking)).isEqualTo("f2");
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void getOptimalFormat_NoOptimalSolution() {
-        GuitarTab tab = new GuitarTab("test", "", "f2", "f3");
-        List<String> formatRanking = Arrays.asList("f1", "f4");
 
-        FormatUtils.getOptimalFormat(tab, formatRanking);
+    @Test
+    void getOptimalFormat_NoOptimalSolution() {
+        final GuitarTab tab = new GuitarTab("test", "", "f2", "f3");
+        final List<String> formatRanking = Arrays.asList("f1", "f4");
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> FormatUtils.getOptimalFormat(tab, formatRanking));
     }
 
 }

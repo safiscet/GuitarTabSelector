@@ -1,0 +1,5 @@
+{
+  "rootPath": "RootPath",
+  "formatRanking": ["Format1", "Format2"],
+  "excludedPaths": ["ExcludedPath1", "ExcludedPath2"]
+}

@@ -1,14 +1,13 @@
 package de.safiscet.guitartabselector.service;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 import de.safiscet.guitartabselector.interfaces.GuitarTabCollector;
 import de.safiscet.guitartabselector.interfaces.GuitarTabProvider;
 import de.safiscet.guitartabselector.model.GuitarTab;
 import de.safiscet.guitartabselector.model.GuitarTabConfiguration;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Created by Stefan Fritsch on 27.05.2017.
@@ -16,19 +15,20 @@ import java.util.List;
 public class GuitarTabDirectoryService implements GuitarTabCollector, GuitarTabProvider {
 
     private GuitarTab currentTab;
-    private List<GuitarTab> guitarTabs;
-    private List<String> formats;
-    private List<String> discardedFormats = new ArrayList<>();
+    private final List<GuitarTab> guitarTabs;
+    private final List<String> formats;
+    private final List<String> discardedFormats = new ArrayList<>();
 
-    public GuitarTabDirectoryService(GuitarTabConfiguration config) {
+
+    public GuitarTabDirectoryService(final GuitarTabConfiguration config, final DirectoryVisitor directoryVisitor) {
         guitarTabs = new ArrayList<>();
         formats = config.getFormatRanking();
-        DirectoryVisitor directoryVisitor = new DirectoryVisitor(config, this);
-        directoryVisitor.startVisiting();
+        directoryVisitor.startVisiting(this);
     }
 
+
     @Override
-    public void notifyNewGuitarTab(String name, String path, String format) {
+    public void notifyNewGuitarTab(final String name, final String path, final String format) {
         if (!isSupportedFormat(format)) {
             if (!discardedFormats.contains(format.toLowerCase())) {
                 discardedFormats.add(format);
@@ -36,7 +36,7 @@ public class GuitarTabDirectoryService implements GuitarTabCollector, GuitarTabP
             }
             return;
         }
-        if(isCurrentTabAsOtherExtension(name, path, format)) {
+        if (isCurrentTabAsOtherExtension(name, path, format)) {
             currentTab.addFormat(format);
         } else {
             currentTab = new GuitarTab();
@@ -47,22 +47,26 @@ public class GuitarTabDirectoryService implements GuitarTabCollector, GuitarTabP
         }
     }
 
-    private boolean isSupportedFormat(String format) {
+
+    private boolean isSupportedFormat(final String format) {
         return formats.stream()
                 .anyMatch(supported -> StringUtils.equalsIgnoreCase(format, supported));
     }
+
 
     @Override
     public void notifyNewDirectory() {
         currentTab = null;
     }
 
+
     @Override
     public Collection<GuitarTab> getAllGuitarTabs() {
         return guitarTabs;
     }
 
-    private boolean isCurrentTabAsOtherExtension(String name, String path, String format) {
+
+    private boolean isCurrentTabAsOtherExtension(final String name, final String path, final String format) {
         return currentTab != null &&
                 StringUtils.equalsIgnoreCase(currentTab.getName(), name);
     }

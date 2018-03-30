@@ -1,14 +1,16 @@
 package de.safiscet.guitartabselector.service;
 
-import de.safiscet.guitartabselector.interfaces.GuitarTabCollector;
-import de.safiscet.guitartabselector.model.GuitarTab;
-import de.safiscet.guitartabselector.model.GuitarTabConfiguration;
-
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collection;
 import java.util.stream.Collectors;
+import de.safiscet.guitartabselector.interfaces.GuitarTabCollector;
+import de.safiscet.guitartabselector.model.GuitarTabConfiguration;
 
 /**
  * Created by Stefan Fritsch on 27.05.2017.
@@ -19,15 +21,15 @@ public class DirectoryVisitor implements FileVisitor<Path> {
     private Path root;
     private Collection<Path> excludedPaths;
 
-    DirectoryVisitor(GuitarTabConfiguration config, GuitarTabCollector guitarTabCollector) {
-        this.guitarTabCollector = guitarTabCollector;
+    DirectoryVisitor(GuitarTabConfiguration config) {
         root = Paths.get(config.getRootPath());
         excludedPaths = config.getExcludedPaths().stream()
                 .map(p -> Paths.get(p))
                 .collect(Collectors.toSet());
     }
 
-    void startVisiting() {
+    void startVisiting(GuitarTabCollector guitarTabCollector) {
+        this.guitarTabCollector = guitarTabCollector;
         try {
             Files.walkFileTree(root, this);
         } catch (IOException e) {

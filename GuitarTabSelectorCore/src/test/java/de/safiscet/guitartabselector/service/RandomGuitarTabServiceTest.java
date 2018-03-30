@@ -108,7 +108,7 @@ class RandomGuitarTabServiceTest {
         when(provider.getAllGuitarTabs()).thenReturn(tabs);
 
         final GuitarTabConfiguration config = new FakeGuitarTabConfiguration();
-        underTest = new RandomGuitarTabService(config, provider);
+        underTest = new RandomGuitarTabService(provider);
 
         return tabs;
     }

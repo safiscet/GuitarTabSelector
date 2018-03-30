@@ -7,7 +7,7 @@ import de.safiscet.guitartabselector.exceptions.NoSuchGuitarTabException;
 import de.safiscet.guitartabselector.model.GuitarTab;
 import de.safiscet.guitartabselector.model.GuitarTabConfiguration;
 import de.safiscet.guitartabselector.service.GuitarTabConfigurationService;
-import de.safiscet.guitartabselector.service.GuitarTabDirectoryService;
+import de.safiscet.guitartabselector.service.GuitarTabSelectorFactory;
 import de.safiscet.guitartabselector.service.RandomGuitarTabService;
 import de.safiscet.guitartabselector.util.FormatUtils;
 import de.safiscet.guitartabselector.util.GuitarTabUtils;
@@ -46,7 +46,8 @@ public class GuitarTabSelectorController implements Initializable {
         } catch (final InvalidConfigurationException e) {
             handleException(e);
         }
-        randomGuitarTabService = new RandomGuitarTabService(config, new GuitarTabDirectoryService(config));
+        final GuitarTabSelectorFactory guitarTabSelectorFactory = new GuitarTabSelectorFactory();
+        randomGuitarTabService = guitarTabSelectorFactory.createRandomGuitarTabService(config);
         formatsListView.setItems(formats);
         //TODO: show default view if no tab is loaded or try to load the first tab automatically
         //TODO: If no config is loaded, ask to create/load one

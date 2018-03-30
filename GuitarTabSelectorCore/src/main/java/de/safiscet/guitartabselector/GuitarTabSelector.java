@@ -1,60 +1,67 @@
 package de.safiscet.guitartabselector;
 
-import de.safiscet.guitartabselector.exceptions.InvalidConfigurationException;
-import de.safiscet.guitartabselector.exceptions.NoSuchGuitarTabException;
-import de.safiscet.guitartabselector.interfaces.GuitarTabProvider;
-import de.safiscet.guitartabselector.model.GuitarTab;
-import de.safiscet.guitartabselector.model.GuitarTabConfiguration;
-import org.apache.commons.cli.*;
-import org.apache.commons.lang3.StringUtils;
-import de.safiscet.guitartabselector.service.GuitarTabConfigurationService;
-import de.safiscet.guitartabselector.service.GuitarTabDirectoryService;
-import de.safiscet.guitartabselector.service.RandomGuitarTabService;
-import de.safiscet.guitartabselector.util.FormatUtils;
-import de.safiscet.guitartabselector.util.GuitarTabUtils;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.lang3.StringUtils;
+import de.safiscet.guitartabselector.exceptions.InvalidConfigurationException;
+import de.safiscet.guitartabselector.exceptions.NoSuchGuitarTabException;
+import de.safiscet.guitartabselector.model.GuitarTab;
+import de.safiscet.guitartabselector.model.GuitarTabConfiguration;
+import de.safiscet.guitartabselector.service.GuitarTabConfigurationService;
+import de.safiscet.guitartabselector.service.GuitarTabSelectorFactory;
+import de.safiscet.guitartabselector.service.RandomGuitarTabService;
+import de.safiscet.guitartabselector.util.FormatUtils;
+import de.safiscet.guitartabselector.util.GuitarTabUtils;
 
 /**
  * Created by Stefan Fritsch on 31.05.2017.
  */
 public class GuitarTabSelector {
 
-    private static final String rootArg = "r";
-    private static final String rootArgLong = "root";
-    private static final String excludedArg = "e";
-    private static final String excludedArgLong = "excluded";
-    private static final String formatArg = "f";
-    private static final String formatArgLong = "formats";
-    private static final String helpArg = "h";
-    private static final String helpArgLong = "help";
-    private static final String configArg = "c";
-    private static final String configArgLong = "config";
+    private static final String ROOT_ARG = "r";
+    private static final String ROOT_ARG_LONG = "root";
+    private static final String EXCLUDED_ARG = "e";
+    private static final String EXCLUDED_ARG_LONG = "excluded";
+    private static final String FORMAT_ARG = "f";
+    private static final String FORMAT_ARG_LONG = "formats";
+    private static final String HELP_ARG = "h";
+    private static final String HELP_ARG_LONG = "help";
+    private static final String CONFIG_ARG = "c";
+    private static final String CONFIG_ARG_LONG = "config";
 
     private static final List<String> defaultFormats = FormatUtils.getDefaultFormats();
 
     private GuitarTab currentTab;
     private GuitarTabConfiguration config;
-    private GuitarTabConfigurationService configService;
-    private RandomGuitarTabService randomGuitarTabService;
+    private final GuitarTabConfigurationService configService;
+    private final RandomGuitarTabService randomGuitarTabService;
 
-    public static void main(String[] args) {
-        GuitarTabSelector selector = new GuitarTabSelector(args);
+
+    public static void main(final String[] args) {
+        final GuitarTabSelector selector = new GuitarTabSelector(args);
         selector.start();
     }
 
-    private GuitarTabSelector(String[] args) {
+
+    private GuitarTabSelector(final String[] args) {
         configService = new GuitarTabConfigurationService();
         createConfiguration(args);
-        GuitarTabProvider guitarTabProvider = new GuitarTabDirectoryService(config);
-        randomGuitarTabService = new RandomGuitarTabService(config, guitarTabProvider);
+        final GuitarTabSelectorFactory guitarTabSelectorFactory = new GuitarTabSelectorFactory();
+        randomGuitarTabService = guitarTabSelectorFactory.createRandomGuitarTabService(config);
     }
 
+
     private void start() {
-        Scanner scanner = new Scanner(System.in);
+        final Scanner scanner = new Scanner(System.in);
         System.out.println("Found " + randomGuitarTabService.getNumberOfTabs() + " different guitar tabs in total.\n");
         System.out.println("Control via command line input:");
         System.out.println("next, n \t - \t Get next Tab");
@@ -64,12 +71,13 @@ public class GuitarTabSelector {
 
         while (true) {
             System.out.println("");
-            String input = scanner.nextLine();
+            final String input = scanner.nextLine();
             handleInput(input);
         }
     }
 
-    private void handleInput(String input) {
+
+    private void handleInput(final String input) {
         if (StringUtils.equalsAnyIgnoreCase(input, "next", "n")) {
             handleNextTab();
         } else if (StringUtils.equalsAnyIgnoreCase(input, "prev", "p")) {
@@ -84,6 +92,7 @@ public class GuitarTabSelector {
         }
     }
 
+
     private void handleNextTab() {
         try {
             currentTab = randomGuitarTabService.getNextTab();
@@ -91,53 +100,56 @@ public class GuitarTabSelector {
             System.out.println("Path: " + currentTab.getPath());
             System.out.println("Available Formats: "
                     + FormatUtils.getOrderedFormats(currentTab, config.getFormatRanking()));
-        } catch (NoSuchGuitarTabException e) {
+        } catch (final NoSuchGuitarTabException e) {
             System.out.println("There is no next tab!");
         }
     }
+
 
     private void handlePreviousTab() {
         try {
             currentTab = randomGuitarTabService.getPreviousTab();
             System.out.println("Selected Tab: " + currentTab);
-        } catch (NoSuchGuitarTabException e) {
+        } catch (final NoSuchGuitarTabException e) {
             System.out.println("There is no previous tab!");
         }
     }
 
+
     private void handleOpenTab() {
         try {
             GuitarTabUtils.openDefaultGuitarTab(currentTab, config);
-        } catch (NoSuchGuitarTabException e) {
+        } catch (final NoSuchGuitarTabException e) {
             System.out.println("The guitar tab could not be opened: " + e.getMessage());
         }
     }
 
-    private void createConfiguration(String[] args) {
-        Options options = getOptions();
-        CommandLineParser parser = new DefaultParser();
+
+    private void createConfiguration(final String[] args) {
+        final Options options = getOptions();
+        final CommandLineParser parser = new DefaultParser();
         CommandLine cmd = null;
         try {
             cmd = parser.parse(options, args);
 
-            if (cmd.hasOption(configArg)) {
-                String configPath = cmd.getOptionValue(configArg);
+            if (cmd.hasOption(CONFIG_ARG)) {
+                final String configPath = cmd.getOptionValue(CONFIG_ARG);
                 config = configService.getFromJsonFile(configPath);
             } else {
                 config = new GuitarTabConfiguration();
             }
 
-            if (cmd.hasOption(rootArg)) {
-                config.setRootPath(cmd.getOptionValue(rootArg));
+            if (cmd.hasOption(ROOT_ARG)) {
+                config.setRootPath(cmd.getOptionValue(ROOT_ARG));
             }
 
-            if (cmd.hasOption(excludedArg)) {
-                String[] excludes = cmd.getOptionValues(excludedArg);
+            if (cmd.hasOption(EXCLUDED_ARG)) {
+                final String[] excludes = cmd.getOptionValues(EXCLUDED_ARG);
                 config.setExcludedPaths(new ArrayList<>(Arrays.asList(excludes)));
             }
 
-            if (cmd.hasOption(formatArg)) {
-                String[] formats = cmd.getOptionValues(formatArg);
+            if (cmd.hasOption(FORMAT_ARG)) {
+                final String[] formats = cmd.getOptionValues(FORMAT_ARG);
                 config.setFormatRanking(new ArrayList<>(Arrays.asList(formats)));
             } else {
                 config.setFormatRanking(defaultFormats);
@@ -147,47 +159,49 @@ public class GuitarTabSelector {
                 throw new InvalidConfigurationException("There must be a root path!");
             }
 
-        } catch (ParseException e) {
+        } catch (final ParseException e) {
             help(options);
             throw new IllegalArgumentException(e);
-        } catch (InvalidConfigurationException e) {
+        } catch (final InvalidConfigurationException e) {
             System.out.println("The configuration was invalid. " + e.getMessage());
             help(options);
             throw new IllegalArgumentException(e);
         }
     }
 
-    private void help(Options options) {
-        HelpFormatter helpFormatter = new HelpFormatter();
+
+    private void help(final Options options) {
+        final HelpFormatter helpFormatter = new HelpFormatter();
         helpFormatter.printHelp("Main", options);
     }
 
-    private Options getOptions() {
-        Options options = new Options();
 
-        Option rootPath = Option.builder(rootArg)
-                .longOpt(rootArgLong)
+    private Options getOptions() {
+        final Options options = new Options();
+
+        final Option rootPath = Option.builder(ROOT_ARG)
+                .longOpt(ROOT_ARG_LONG)
                 .argName("root dir")
                 .hasArg()
                 .desc("The root directory for the recursive guitar tab search")
                 .build();
 
-        Option excludedPaths = Option.builder(excludedArg)
-                .longOpt(excludedArgLong)
+        final Option excludedPaths = Option.builder(EXCLUDED_ARG)
+                .longOpt(EXCLUDED_ARG_LONG)
                 .argName("excluded dirs")
                 .hasArgs()
                 .desc("Excluded directories for the recursive guitar tab search")
                 .build();
 
-        Option formats = Option.builder(formatArg)
-                .longOpt(formatArgLong)
+        final Option formats = Option.builder(FORMAT_ARG)
+                .longOpt(FORMAT_ARG_LONG)
                 .argName("preferred formats")
                 .hasArgs()
                 .desc("Ordered formats that should be supported")
                 .build();
 
-        Option config = Option.builder(configArg)
-                .longOpt(configArgLong)
+        final Option config = Option.builder(CONFIG_ARG)
+                .longOpt(CONFIG_ARG_LONG)
                 .argName("config file")
                 .hasArg()
                 .desc("JSON config file")
@@ -197,7 +211,7 @@ public class GuitarTabSelector {
         options.addOption(excludedPaths);
         options.addOption(formats);
         options.addOption(config);
-        options.addOption(helpArg, helpArgLong, false, "show help.");
+        options.addOption(HELP_ARG, HELP_ARG_LONG, false, "show help.");
         return options;
     }
 }

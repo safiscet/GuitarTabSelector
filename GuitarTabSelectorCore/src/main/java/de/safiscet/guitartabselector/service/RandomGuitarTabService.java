@@ -1,13 +1,11 @@
 package de.safiscet.guitartabselector.service;
 
-import de.safiscet.guitartabselector.exceptions.NoSuchGuitarTabException;
-import de.safiscet.guitartabselector.interfaces.GuitarTabProvider;
-import de.safiscet.guitartabselector.model.GuitarTab;
-import de.safiscet.guitartabselector.model.GuitarTabConfiguration;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import de.safiscet.guitartabselector.exceptions.NoSuchGuitarTabException;
+import de.safiscet.guitartabselector.interfaces.GuitarTabProvider;
+import de.safiscet.guitartabselector.model.GuitarTab;
 
 /**
  * Created by Stefan Fritsch on 25.05.2017.
@@ -17,7 +15,7 @@ public class RandomGuitarTabService {
     private final List<GuitarTab> guitarTabs;
     private int currentPosition = -1;
 
-    public RandomGuitarTabService(GuitarTabConfiguration config, GuitarTabProvider guitarTabProvider) {
+    public RandomGuitarTabService(GuitarTabProvider guitarTabProvider) {
         guitarTabs = new ArrayList<>(guitarTabProvider.getAllGuitarTabs());
         Collections.shuffle(guitarTabs);
     }

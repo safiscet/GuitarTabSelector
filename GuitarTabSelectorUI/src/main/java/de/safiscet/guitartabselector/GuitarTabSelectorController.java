@@ -9,6 +9,8 @@ import de.safiscet.guitartabselector.model.GuitarTabConfiguration;
 import de.safiscet.guitartabselector.service.GuitarTabConfigurationService;
 import de.safiscet.guitartabselector.service.GuitarTabDirectoryService;
 import de.safiscet.guitartabselector.service.RandomGuitarTabService;
+import de.safiscet.guitartabselector.util.FormatUtils;
+import de.safiscet.guitartabselector.util.GuitarTabUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;

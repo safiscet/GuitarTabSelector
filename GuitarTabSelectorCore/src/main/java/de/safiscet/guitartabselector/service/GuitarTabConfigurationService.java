@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.safiscet.guitartabselector.exceptions.InvalidConfigurationException;
 import de.safiscet.guitartabselector.model.GuitarTabConfiguration;
 import org.apache.commons.lang3.StringUtils;
-import de.safiscet.guitartabselector.FormatUtils;
+import de.safiscet.guitartabselector.util.FormatUtils;
 
 import java.io.File;
 import java.io.IOException;

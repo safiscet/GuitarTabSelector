@@ -1,4 +1,4 @@
-package de.safiscet.guitartabselector;
+package de.safiscet.guitartabselector.util;
 
 import de.safiscet.guitartabselector.exceptions.NoSuchGuitarTabException;
 import de.safiscet.guitartabselector.model.GuitarTab;

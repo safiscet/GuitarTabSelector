@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import de.safiscet.guitartabselector.FormatUtils;
 import de.safiscet.guitartabselector.model.GuitarTab;
 import static org.assertj.core.api.Assertions.assertThat;
 

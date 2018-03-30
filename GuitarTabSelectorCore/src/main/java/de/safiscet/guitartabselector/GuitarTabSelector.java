@@ -10,8 +10,9 @@ import org.apache.commons.lang3.StringUtils;
 import de.safiscet.guitartabselector.service.GuitarTabConfigurationService;
 import de.safiscet.guitartabselector.service.GuitarTabDirectoryService;
 import de.safiscet.guitartabselector.service.RandomGuitarTabService;
+import de.safiscet.guitartabselector.util.FormatUtils;
+import de.safiscet.guitartabselector.util.GuitarTabUtils;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

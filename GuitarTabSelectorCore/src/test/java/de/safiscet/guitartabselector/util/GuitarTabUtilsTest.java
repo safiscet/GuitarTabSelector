@@ -1,4 +1,4 @@
-package de.safiscet.guitartabselector;
+package de.safiscet.guitartabselector.util;
 
 
 import org.junit.jupiter.api.Test;

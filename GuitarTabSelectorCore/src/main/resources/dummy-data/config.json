@@ -1,0 +1,5 @@
+{
+  "rootPath": "./GuitarTabSelectorUI/src/main/resources/dummy-data/",
+  "formatRanking": ["txt"],
+  "excludedPaths": []
+}

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Created by Stefan Fritsch on 31.05.2017.
@@ -42,5 +43,9 @@ public class FormatUtils {
 
         throw new IllegalArgumentException("There is no optimal solution for tab formats "
                 + tab.getFormats() + " and format preferences " + formatRanking);
+    }
+
+    public static boolean equalsFormat(String first, String second) {
+        return StringUtils.equalsIgnoreCase(first, second);
     }
 }

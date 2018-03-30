@@ -69,6 +69,9 @@ public class GuitarTabSelector {
         System.out.println("open, o \t - \t Open the current tab");
         System.out.println("exit, e \t - \t Exit");
 
+        System.out.println();
+        handleNextTab();
+
         while (true) {
             System.out.println("");
             final String input = scanner.nextLine();
@@ -83,12 +86,16 @@ public class GuitarTabSelector {
         } else if (StringUtils.equalsAnyIgnoreCase(input, "prev", "p")) {
             handlePreviousTab();
         } else if (StringUtils.equalsAnyIgnoreCase(input, "open", "o")) {
-            handleOpenTab();
+            handleOpenDefaultTab();
         } else if (StringUtils.equalsAnyIgnoreCase(input, "exit", "e")) {
             System.out.println("Shutting down...");
             System.exit(0);
         } else {
-            System.out.println("Input " + input + " could not be interpreted.");
+            if (GuitarTabUtils.tabContainsFormat(currentTab, input)) {
+                handleOpenTab(input);
+            } else {
+                System.out.println("Input " + input + " could not be interpreted.");
+            }
         }
     }
 
@@ -116,9 +123,18 @@ public class GuitarTabSelector {
     }
 
 
-    private void handleOpenTab() {
+    private void handleOpenDefaultTab() {
         try {
             GuitarTabUtils.openDefaultGuitarTab(currentTab, config);
+        } catch (final NoSuchGuitarTabException e) {
+            System.out.println("The guitar tab could not be opened: " + e.getMessage());
+        }
+    }
+
+
+    private void handleOpenTab(final String format) {
+        try {
+            GuitarTabUtils.openGuitarTab(currentTab, format);
         } catch (final NoSuchGuitarTabException e) {
             System.out.println("The guitar tab could not be opened: " + e.getMessage());
         }

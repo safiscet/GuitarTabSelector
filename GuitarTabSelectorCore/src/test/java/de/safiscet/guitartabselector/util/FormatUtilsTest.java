@@ -50,4 +50,14 @@ class FormatUtilsTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> FormatUtils.getOptimalFormat(tab, formatRanking));
     }
 
+
+    @Test
+    void equalsFormat() {
+        assertThat(FormatUtils.equalsFormat("txt", "txt")).isTrue();
+        assertThat(FormatUtils.equalsFormat("txt", "TXT")).isTrue();
+        assertThat(FormatUtils.equalsFormat("TXT", "txt")).isTrue();
+        assertThat(FormatUtils.equalsFormat("Txt", "tXT")).isTrue();
+        assertThat(FormatUtils.equalsFormat("txt", ".txt")).isFalse();
+    }
+
 }
